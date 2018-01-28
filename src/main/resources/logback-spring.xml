@@ -1,0 +1,29 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
+
+    <appender name="Console-Appender" class="ch.qos.logback.core.ConsoleAppender">
+        <layout>
+            <pattern>%msg%n</pattern>
+        </layout>
+    </appender>
+    <appender name="File-Appender" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/logfile-${timestamp-by-second}.log</file>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
+        </encoder>
+    </appender>
+
+    <logger name="example.controllers" level="WARN" additivity="false">
+        <appender-ref ref="Console-Appender"/>
+        <appender-ref ref="File-Appender"/>
+    </logger>
+    <logger name="de.felixroske.jfxsupport" level="DEBUG" additivity="false">
+        <appender-ref ref="Console-Appender"/>
+        <appender-ref ref="File-Appender"/>
+    </logger>
+
+</configuration>
