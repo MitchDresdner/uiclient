@@ -4,3 +4,7 @@ spring:
 
 javafx:
     title: MyCoolApp (Pt 2)
+
+weather:
+    host: http://api.openweathermap.org/data/2.5/weather
+    apiId: my-id

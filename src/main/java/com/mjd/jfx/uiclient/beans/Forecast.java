@@ -11,25 +11,24 @@ public class Forecast {
 
     private Integer id;
 
-    @JsonProperty("name")
-    private String  cityName;
+    private String  name;
     //private Weather weather;
 
-    @JsonProperty("cod")
-    private String searchCode;
+    private String cod;
 
-    @JsonProperty("dt")
-    private Long dateTime;
+    private Long dt;
     private Integer visibility;
 
     //private Coord coord;
 
+    @JsonProperty("name")
     public String getCityName() {
-        return cityName;
+        return name;
     }
 
+    @JsonProperty("name")
     public void setCityName(String name) {
-        this.cityName = cityName;
+        this.name = name;
     }
 
 //    public Weather getWeather() {
@@ -49,20 +48,24 @@ public class Forecast {
         this.id = id;
     }
 
+    @JsonProperty("cod")
     public String getSearchCode() {
-        return searchCode;
+        return cod;
     }
 
+    @JsonProperty("cod")
     public void setSearchCode(String searchCode) {
-        this.searchCode = searchCode;
+        this.cod = cod;
     }
 
+    @JsonProperty("dt")
     public Long getDateTime() {
-        return dateTime;
+        return dt;
     }
 
+    @JsonProperty("dt")
     public void setDateTime(Long dt) {
-        this.dateTime = dateTime;
+        this.dt = dt;
     }
 
     public Integer getVisibility() {
@@ -76,7 +79,7 @@ public class Forecast {
     @Override
     public String toString() {
         return "Forecast{" +
-                "name='" + cityName + '\'' +
+                "name='" + name + '\'' +
                 ", visibility='" + visibility.toString() + '\'' +
 //                ", description=" + weather.getDescription() +
                 '}';

@@ -1,5 +1,6 @@
 package com.mjd.jfx.uiclient.controllers;
 
+import com.mjd.jfx.uiclient.ConfigProperties;
 import com.mjd.jfx.uiclient.services.AwesomeActionService;
 import com.mjd.jfx.uiclient.services.ITaskService;
 import com.mjd.jfx.uiclient.services.InMemoryTaskService;
@@ -16,6 +17,10 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @FXMLController
 public class WeatherController {
@@ -40,6 +45,14 @@ public class WeatherController {
     @FXML
     private Button weatherBtn;
 
+    @Value("${weather.host}")
+    private String hostPath;
+
+    @Value("${weather.apiId}")
+    private String appId;
+
+    @Autowired
+    ConfigProperties config;
 
     // Be aware: This is a Spring bean. So we can do the following:
     @Autowired
@@ -59,21 +72,29 @@ public class WeatherController {
     @FXML
     void startTask(ActionEvent event) {
 
-        runtask(new InMemoryTaskService(), textArea);
+        runtask(new InMemoryTaskService(), textArea, null);
     }
 
     @FXML
     void fetchWeather(ActionEvent event) {
-        runtask(new WeatherService(), textArea);
+        URL path = null;
+
+        try {
+            String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=20151,us";
+            path = new URL(pathSpec);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        runtask(new WeatherService(), textArea, path);
     }
 
-    void runtask (ITaskService service, TextArea textArea) {
+    void runtask (ITaskService service, TextArea textArea, URL pathSpec) {
 
         // Create a Runnable
         Runnable task = new Runnable() {
             public void run() {
                 ITaskService runner = service;
-                runner.runTask(runnerLabel, textArea);
+                runner.runTask(runnerLabel, textArea, pathSpec);
             }
         };
 

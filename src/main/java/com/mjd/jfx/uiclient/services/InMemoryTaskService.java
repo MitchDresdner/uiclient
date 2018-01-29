@@ -4,9 +4,11 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
+import java.net.URL;
+
 public class InMemoryTaskService implements ITaskService {
 
-    public void runTask(Label runnerLabel, TextArea textArea)  {
+    public void runTask(Label runnerLabel, TextArea textArea, URL pathSpec)  {
         for (int i = 1; i <= 10; i++) {
             try {
                 // Get the Status
