@@ -2,6 +2,7 @@ package com.mjd.jfx.uiclient.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
@@ -9,20 +10,26 @@ import org.springframework.boot.jackson.JsonComponent;
 public class Forecast {
 
     private Integer id;
-    private String  name;
+
+    @JsonProperty("name")
+    private String  cityName;
     //private Weather weather;
-    private String cod;
-    private Long dt;
+
+    @JsonProperty("cod")
+    private String searchCode;
+
+    @JsonProperty("dt")
+    private Long dateTime;
     private Integer visibility;
 
     //private Coord coord;
 
-    public String getName() {
-        return name;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCityName(String name) {
+        this.cityName = cityName;
     }
 
 //    public Weather getWeather() {
@@ -42,20 +49,20 @@ public class Forecast {
         this.id = id;
     }
 
-    public String getCod() {
-        return cod;
+    public String getSearchCode() {
+        return searchCode;
     }
 
-    public void setCod(String cod) {
-        this.cod = cod;
+    public void setSearchCode(String searchCode) {
+        this.searchCode = searchCode;
     }
 
-    public Long getDt() {
-        return dt;
+    public Long getDateTime() {
+        return dateTime;
     }
 
-    public void setDt(Long dt) {
-        this.dt = dt;
+    public void setDateTime(Long dt) {
+        this.dateTime = dateTime;
     }
 
     public Integer getVisibility() {
@@ -69,7 +76,7 @@ public class Forecast {
     @Override
     public String toString() {
         return "Forecast{" +
-                "name='" + name + '\'' +
+                "name='" + cityName + '\'' +
                 ", visibility='" + visibility.toString() + '\'' +
 //                ", description=" + weather.getDescription() +
                 '}';

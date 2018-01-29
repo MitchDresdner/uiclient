@@ -4,6 +4,11 @@
     <property name="LOG_PATH" value="logs"/>
     <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
 
+    <!-- Insert the current time formatted as "yyyyMMdd'T'HHmmss" under
+       the key "bySecond" into the logger context. This value will be
+       available to all subsequent configuration elements. -->
+    <timestamp key="timestamp-by-second" datePattern="yyyyMMdd'T'HHmmss"/>
+
     <appender name="Console-Appender" class="ch.qos.logback.core.ConsoleAppender">
         <layout>
             <pattern>%msg%n</pattern>

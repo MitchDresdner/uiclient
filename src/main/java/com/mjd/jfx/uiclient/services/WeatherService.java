@@ -23,12 +23,12 @@ public class WeatherService implements ITaskService {
                 Forecast weather = null;
                 runnerLabel.setText("Downloading weather data\n");
                 try {
-                    weather = mapper.readValue(new URL("http://api.openweathermap.org/data/2.5/weather?APPID=your-api-key&units=imperial&zip=20151,us"), Forecast.class);
+                    weather = mapper.readValue(new URL("http://api.openweathermap.org/data/2.5/weather?APPID=9c191c58be6ceca9a392f8f975cb7da7&units=imperial&zip=20151,us"), Forecast.class);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 textArea.appendText(weather.toString());
-                runnerLabel.setText("Weather for " + weather.getName() + "\n");
+                runnerLabel.setText("Weather for " + weather.getCityName() + "\n");
             }
         });
 
