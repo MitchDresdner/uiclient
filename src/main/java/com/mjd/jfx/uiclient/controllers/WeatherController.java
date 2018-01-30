@@ -6,8 +6,7 @@ import com.mjd.jfx.uiclient.services.ITaskService;
 import com.mjd.jfx.uiclient.services.InMemoryTaskService;
 import com.mjd.jfx.uiclient.services.WeatherService;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.net.MalformedURLException;
@@ -51,6 +48,9 @@ public class WeatherController {
     @Value("${weather.apiId}")
     private String appId;
 
+    @FXML
+    private TextField apiId;
+
     @Autowired
     ConfigProperties config;
 
@@ -78,6 +78,20 @@ public class WeatherController {
     @FXML
     void fetchWeather(ActionEvent event) {
         URL path = null;
+
+        if (apiId == null || apiId.getText().length() < 32) {
+
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning Dialog");
+            alert.setHeaderText("API Id missing or invalid");
+            alert.setContentText("Be sure to enter API Id before requesting Weather");
+
+            alert.showAndWait();
+
+            return;
+        }
+
+        config.setAppId( apiId.getText());
 
         try {
             String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=20151,us";

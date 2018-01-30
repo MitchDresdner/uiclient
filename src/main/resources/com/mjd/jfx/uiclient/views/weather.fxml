@@ -20,5 +20,6 @@
         <Button fx:id="runnerButton" layoutX="347.0" layoutY="224.0" mnemonicParsing="false" onAction="#startTask" text="Runner" />
         <TextArea fx:id="textArea" layoutX="99.0" layoutY="257.0" prefHeight="119.0" prefWidth="234.0" />
         <Button fx:id="weatherBtn" layoutX="348.0" layoutY="257.0" mnemonicParsing="false" onAction="#fetchWeather" text="Weather" />
+      <TextField fx:id="apiId" layoutX="348.0" layoutY="292.0" promptText="API Id" />
     </children>
 </Pane>
