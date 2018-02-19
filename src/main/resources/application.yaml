@@ -8,3 +8,4 @@ javafx:
 weather:
     host: http://api.openweathermap.org/data/2.5/weather
     apiId: my-id
+    postalCode: 20152

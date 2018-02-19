@@ -18,6 +18,9 @@ public class ConfigProperties {
     @Value("${weather.apiId}")
     private String appId;
 
+    @Value("${weather.postalCode}")
+    private String postalCode;
+
     public String getHostPath() {
         return hostPath;
     }
@@ -28,5 +31,13 @@ public class ConfigProperties {
 
     public void setAppId(String appId) {
         this.appId = appId;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 }

@@ -4,20 +4,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.stereotype.Component;
 
+import java.net.URL;
+
+@Component
 @JsonComponent
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Forecast {
 
     private Integer id;
 
-    private String  name;
-    //private Weather weather;
+    private String  name = "";
+    private Weather weather[];
 
     private String cod;
 
     private Long dt;
-    private Integer visibility;
+    private Integer visibility = 0;
+
+    @JsonIgnore
+    private URL url;
 
     //private Coord coord;
 
@@ -31,13 +38,13 @@ public class Forecast {
         this.name = name;
     }
 
-//    public Weather getWeather() {
-//        return weather;
-//    }
-//
-//    public void setWeather(Weather weather) {
-//        this.weather = weather;
-//    }
+    public Weather[] getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather[]) {
+        this.weather = weather;
+    }
 
 
     public Integer getId() {
@@ -74,6 +81,14 @@ public class Forecast {
 
     public void setVisibility(Integer visibility) {
         this.visibility = visibility;
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
     }
 
     @Override

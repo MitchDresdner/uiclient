@@ -1,12 +1,17 @@
 package com.mjd.jfx.uiclient.controllers;
 
 import com.mjd.jfx.uiclient.ConfigProperties;
-import com.mjd.jfx.uiclient.services.AwesomeActionService;
-import com.mjd.jfx.uiclient.services.ITaskService;
-import com.mjd.jfx.uiclient.services.InMemoryTaskService;
-import com.mjd.jfx.uiclient.services.WeatherService;
+import com.mjd.jfx.uiclient.UiClientApplication;
+import com.mjd.jfx.uiclient.beans.Forecast;
+import com.mjd.jfx.uiclient.services.*;
+import com.mjd.jfx.uiclient.views.Stage2View;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,21 +47,48 @@ public class WeatherController {
     @FXML
     private Button weatherBtn;
 
+    @FXML
+    private Label weatherLabel;
+
+    @FXML
+    private TextField apiId;
+
+    @FXML
+    private TextField postalCode;
+
+    @FXML
+    private ImageView weatherImage;
+
+    @FXML
+    private Button stage2Btn;
+
     @Value("${weather.host}")
     private String hostPath;
 
     @Value("${weather.apiId}")
     private String appId;
 
-    @FXML
-    private TextField apiId;
-
     @Autowired
     ConfigProperties config;
+
+    @Autowired
+    Forecast forecast;
+
+    @FXML
+    public void initialize() {
+        postalCode.setText(config.getPostalCode());
+        weatherImage.setImage(new Image("http://openweathermap.org/img/w/10d.png"));
+        apiId.setText(config.getAppId());
+    }
 
     // Be aware: This is a Spring bean. So we can do the following:
     @Autowired
     private AwesomeActionService actionService;
+
+    @FXML
+    void setStage2(ActionEvent event) {
+        UiClientApplication.showView(Stage2View.class);
+    }
 
     @FXML
     private void setHelloText(final Event event) {
@@ -81,12 +113,16 @@ public class WeatherController {
 
         if (apiId == null || apiId.getText().length() < 32) {
 
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning Dialog");
-            alert.setHeaderText("API Id missing or invalid");
-            alert.setContentText("Be sure to enter API Id before requesting Weather");
+            displayAlert("Warning Dialog", "API Id missing or invalid", "Be sure to enter API Id before requesting Weather");
 
-            alert.showAndWait();
+            return;
+        }
+
+        config.setAppId( apiId.getText());
+
+        if (postalCode == null || postalCode.getText().length() < 5) {
+
+            displayAlert("Warning Dialog", "Postal Code missing or invalid", "Be sure to enter Postal code before requesting Weather");
 
             return;
         }
@@ -94,21 +130,58 @@ public class WeatherController {
         config.setAppId( apiId.getText());
 
         try {
-            String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=20151,us";
+            String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=" +  config.getPostalCode() + ",us";
             path = new URL(pathSpec);
+            forecast.setUrl(path);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        runtask(new WeatherService(), textArea, path);
+
+        final ForecastService forecastService = new ForecastService();
+        forecastService.setPathSpec(path);
+
+        weatherBtn.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                weatherLabel.setText("Getting weather ...");
+                if (forecastService.getState() == Worker.State.READY) {
+                    forecastService.start();
+                } else {
+                    forecastService.restart();
+                }
+            }
+        });
+
+        weatherBtn.disableProperty().bind(forecastService.runningProperty());
+
+        forecastService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            public void handle(WorkerStateEvent t) {
+                forecast = forecastService.getValue();
+                weatherLabel.setText("Weather for " + forecast.getCityName());
+                weatherImage.setImage(new Image("http://openweathermap.org/img/w/" + forecast.getWeather()[0].getIcon() + ".png"));
+            }
+        });
+
+        // runtask(new WeatherService(), textArea, path);
     }
 
-    void runtask (ITaskService service, TextArea textArea, URL pathSpec) {
+
+
+    private void displayAlert(String title, String hdr, String detail) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(hdr);
+        alert.setContentText(detail);
+
+        alert.showAndWait();
+    }
+
+    void runtask (final ITaskService service, final TextArea textArea, final URL pathSpec) {
 
         // Create a Runnable
         Runnable task = new Runnable() {
             public void run() {
                 ITaskService runner = service;
-                runner.runTask(runnerLabel, textArea, pathSpec);
+                runner.runTask(weatherLabel, textArea, pathSpec);
             }
         };
 
@@ -119,5 +192,40 @@ public class WeatherController {
         // Start the thread
         backgroundThread.start();
     }
+
+
+
+
+//    private static class WeatherService extends Service<String> {
+//        private URL url = null;
+//        private Forecast weather = null;
+//
+//        public final void setUrl(URL value) {
+//            url = value;
+//        }
+//
+//        public final URL getUrl() {
+//            return url;
+//        }
+//
+//        public final Forecast getWeather() { return weather; }
+//
+//        protected Task<String> createTask() {
+//            final URL _url = getUrl();
+//            return new Task<String>() {
+//                protected String call()
+//                        throws IOException, MalformedURLException {
+//                    ObjectMapper mapper = new ObjectMapper();
+//                    String result = "Get Json completes";
+//                    try {
+//                        weather = mapper.readValue(url, Forecast.class);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    return result;
+//                }
+//            };
+//        }
+//    }
 
 }

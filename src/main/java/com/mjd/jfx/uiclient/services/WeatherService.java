@@ -11,27 +11,31 @@ import java.io.IOException;
 import java.net.URL;
 
 public class WeatherService implements ITaskService {
-    @Override
-    public void runTask(Label runnerLabel, TextArea textArea, URL pathSpec)  {
 
-        ObjectMapper mapper = new ObjectMapper();
+    Forecast forecast;
+
+    public void runTask(final Label runnerLabel, final TextArea textArea, final URL pathSpec)  {
+
+        final ObjectMapper mapper = new ObjectMapper();
 
         // Update the Label on the JavaFx Application Thread
         Platform.runLater(new Runnable() {
-            @Override
+
             public void run() {
-                Forecast weather = null;
+                //Forecast weather = null;
                 runnerLabel.setText("Downloading weather data\n");
                 try {
-                    weather = mapper.readValue(pathSpec, Forecast.class);
+                    forecast = mapper.readValue(pathSpec, Forecast.class);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                textArea.appendText(weather.toString());
-                runnerLabel.setText("Weather for " + weather.getCityName() + "\n");
+                textArea.appendText(forecast.toString());
+                runnerLabel.setText("Weather for " + forecast.getCityName() + "\n");
             }
         });
 
     }
+
+
 }
 

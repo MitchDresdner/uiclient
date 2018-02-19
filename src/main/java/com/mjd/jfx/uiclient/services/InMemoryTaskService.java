@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class InMemoryTaskService implements ITaskService {
 
-    public void runTask(Label runnerLabel, TextArea textArea, URL pathSpec)  {
+    public void runTask(final Label runnerLabel, final TextArea textArea, final URL pathSpec)  {
         for (int i = 1; i <= 10; i++) {
             try {
                 // Get the Status
@@ -16,7 +16,7 @@ public class InMemoryTaskService implements ITaskService {
 
                 // Update the Label on the JavaFx Application Thread
                 Platform.runLater(new Runnable() {
-                    @Override
+
                     public void run() {
                         runnerLabel.setText(status);
                     }

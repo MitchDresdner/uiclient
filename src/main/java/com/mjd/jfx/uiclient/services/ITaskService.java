@@ -6,6 +6,6 @@ import javafx.scene.control.TextArea;
 import java.net.URL;
 
 public interface ITaskService {
-    void runTask(Label runnerLabel, TextArea textArea, URL pathSpec);
+    <T> void runTask(final Label runnerLabel, final TextArea textArea, final URL pathSpec);
 }
 

@@ -1,8 +1,13 @@
 package com.mjd.jfx.uiclient.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Weather {
-    private String description;
+
+    private String description = "";
     private String icon;
+    private Integer id;
+    private String main;
 
     public String getDescription() {
         return description;
@@ -28,14 +33,14 @@ public class Weather {
         this.id = id;
     }
 
-    public String getMain() {
+    @JsonProperty("main")
+    public String getConditions() {
         return main;
     }
 
-    public void setMain(String main) {
+    @JsonProperty("main")
+    public void setConditions(String main) {
         this.main = main;
     }
 
-    private Integer id;
-    private String main;
 }

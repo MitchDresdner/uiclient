@@ -1,6 +1,9 @@
-package org.cms.uitester.services;
+package com.mjd.jfx.uiclient.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mjd.jfx.uiclient.ConfigProperties;
+import com.mjd.jfx.uiclient.beans.Forecast;
+import com.mjd.jfx.uiclient.services.ITaskService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -14,31 +17,28 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import org.cms.uitester.beans.Foia;
-import org.cms.uitester.beans.Forecast;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JsonService implements ITaskService {
-    @Override
-    public <T> void runTask(Label runnerLabel, TextArea textArea, ObservableList<T> observableList) {
 
-        FirstLineService service = new FirstLineService();
-        //service.setUrl("http://api.openweathermap.org/data/2.5/weather?APPID=9c191c58be6ceca9a392f8f975cb7da7&units=imperial&zip=20151,us");
-        service.setUrl("http://10.193.183.187:8082/relatedContents/FOIACases");
+    @Autowired
+    ConfigProperties config;
+
+    public <T> void runTask(final Label runnerLabel, final TextArea textArea, final URL pathSpec) {         //}, final ObservableList<T> observableList) {
+
+        final FirstLineService service = new FirstLineService();
+
+        service.setUrl(pathSpec);
 
         service.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-            @Override
             public void handle(WorkerStateEvent t) {
                 System.out.println("done:" + t.getSource().getValue());
-                //Forecast weather = service.getWeather();
-                Foia[] foia = service.getFoia();
-                if (foia != null) {
+                Forecast weather = service.getWeather();
+                if (weather != null) {
                     runnerLabel.setText("FOIA results\n");
-                    for (Foia foiaRec : foia) {
-                        textArea.appendText(foiaRec.toString() + "\n");
-                        observableList.add((T) foiaRec);
-                    }
-
+                    textArea.appendText(weather.toString() + "\n");
+                    //observableList.add((T) weather);
                 } else {
                     textArea.appendText("No results for request\n");
                     runnerLabel.setText("Error Occurred\n");
@@ -51,37 +51,28 @@ public class JsonService implements ITaskService {
     }
 
     private static class FirstLineService extends Service<String> {
-        private StringProperty url = new SimpleStringProperty();
+        private URL url = null;
         private Forecast weather = null;
-        private Foia[] foia = null;
 
-        public final void setUrl(String value) {
-            url.set(value);
+        public final void setUrl(URL value) {
+            url = value;
         }
 
-        public final String getUrl() {
-            return url.get();
-        }
-
-        public final StringProperty urlProperty() {
+        public final URL getUrl() {
             return url;
         }
 
         public final Forecast getWeather() { return weather; }
 
-        public final Foia[] getFoia() { return foia; }
-
         protected Task<String> createTask() {
-            final String _url = getUrl();
+            final URL _url = getUrl();
             return new Task<String>() {
                 protected String call()
                         throws IOException, MalformedURLException {
                     ObjectMapper mapper = new ObjectMapper();
                     String result = "Get Json completes";
                     try {
-                        //weather = mapper.readValue(new URL(_url), Forecast.class);
-                        //Car[] cars2 = objectMapper.readValue(jsonArray, Car[].class);
-                        foia = mapper.readValue(new URL(_url), Foia[].class);
+                        weather = mapper.readValue(url, Forecast.class);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
