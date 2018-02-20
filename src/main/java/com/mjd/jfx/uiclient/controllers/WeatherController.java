@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 
 @FXMLController
 public class WeatherController {
@@ -62,6 +63,12 @@ public class WeatherController {
     @FXML
     private Button stage2Btn;
 
+    @FXML
+    private Label weatherDescriptionLabel;
+
+    @FXML
+    private Label temperatureLabel;
+
     @Value("${weather.host}")
     private String hostPath;
 
@@ -73,6 +80,8 @@ public class WeatherController {
 
     @Autowired
     Forecast forecast;
+
+    Calendar calendar = Calendar.getInstance();
 
     @FXML
     public void initialize() {
@@ -130,7 +139,8 @@ public class WeatherController {
         config.setAppId( apiId.getText());
 
         try {
-            String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=" +  config.getPostalCode() + ",us";
+            //String pathSpec = config.getHostPath() + "?APPID=" + config.getAppId() + "&units=imperial&zip=" +  config.getPostalCode() + ",us";
+            String pathSpec = "http://localhost:3000/weather/1";
             path = new URL(pathSpec);
             forecast.setUrl(path);
         } catch (MalformedURLException e) {
@@ -143,6 +153,7 @@ public class WeatherController {
         weatherBtn.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 weatherLabel.setText("Getting weather ...");
+                logger.info("Invoke weather service: " + forecastService.getState());
                 if (forecastService.getState() == Worker.State.READY) {
                     forecastService.start();
                 } else {
@@ -156,8 +167,15 @@ public class WeatherController {
         forecastService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             public void handle(WorkerStateEvent t) {
                 forecast = forecastService.getValue();
-                weatherLabel.setText("Weather for " + forecast.getCityName());
+                weatherLabel.setText("Weather for " + forecast.getCityName() + "  " + calendar.getTime().toString());
+                weatherDescriptionLabel.setText(forecast.getWeather()[0].getDescription());
+                temperatureLabel.setText("Current " + forecast.getMain().getTemperature() + "F" + "  Low "
+                        + forecast.getMain().getMinTemperature() + " / " + forecast.getMain().getMaxTemperature() + " High" );
                 weatherImage.setImage(new Image("http://openweathermap.org/img/w/" + forecast.getWeather()[0].getIcon() + ".png"));
+
+                calendar.setTimeInMillis(forecast.getDateTime());
+
+                logger.info("On Succeed callback - weather for " + forecast.getCityName() + "  " + calendar.getTime().toString());
             }
         });
 

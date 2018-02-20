@@ -17,6 +17,8 @@ public class Forecast {
 
     private String  name = "";
     private Weather weather[];
+    private MainStats main;
+    private Wind wind;
 
     private String cod;
 
@@ -46,6 +48,13 @@ public class Forecast {
         this.weather = weather;
     }
 
+    public MainStats getMain() {
+        return main;
+    }
+
+    public void setMain(MainStats main) {
+        this.main = main;
+    }
 
     public Integer getId() {
         return id;
@@ -72,7 +81,7 @@ public class Forecast {
 
     @JsonProperty("dt")
     public void setDateTime(Long dt) {
-        this.dt = dt;
+        this.dt = dt * 1000;
     }
 
     public Integer getVisibility() {

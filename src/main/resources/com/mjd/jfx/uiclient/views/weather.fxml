@@ -23,9 +23,11 @@
         <Button fx:id="weatherBtn" layoutX="429.0" layoutY="109.0" mnemonicParsing="false" onAction="#fetchWeather" text="Weather" />
       <TextField fx:id="apiId" layoutX="429.0" layoutY="29.0" promptText="API Id" />
       <TextField fx:id="postalCode" layoutX="429.0" layoutY="70.0" promptText="Postal Code" />
-      <Label fx:id="weatherLabel" layoutX="88.0" layoutY="14.0" prefHeight="25.0" prefWidth="174.0" />
+      <Label fx:id="weatherLabel" layoutX="88.0" layoutY="14.0" prefHeight="25.0" prefWidth="300.0" text="Weather for" />
       <ImageView fx:id="weatherImage" fitHeight="50.0" fitWidth="50.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
       <Label layoutX="25.0" layoutY="183.0" text="Goto Stage2" />
       <Button fx:id="stage2Btn" layoutX="131.0" layoutY="179.0" mnemonicParsing="false" onAction="#setStage2" text="Stage2" />
+      <Label fx:id="weatherDescriptionLabel" layoutX="14.0" layoutY="62.0" text="Weather Description" />
+      <Label fx:id="temperatureLabel" layoutX="88.0" layoutY="39.0" text="Temperature" />
     </children>
 </Pane>
