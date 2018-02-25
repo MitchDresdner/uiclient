@@ -5,6 +5,7 @@ import com.mjd.jfx.uiclient.UiClientApplication;
 import com.mjd.jfx.uiclient.beans.Forecast;
 import com.mjd.jfx.uiclient.services.*;
 import com.mjd.jfx.uiclient.views.Stage2View;
+import eu.hansolo.medusa.Gauge;
 import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -69,6 +70,9 @@ public class WeatherController {
     @FXML
     private Label temperatureLabel;
 
+    @FXML
+    private Gauge tempGauge;
+
     @Value("${weather.host}")
     private String hostPath;
 
@@ -88,6 +92,8 @@ public class WeatherController {
         postalCode.setText(config.getPostalCode());
         weatherImage.setImage(new Image("http://openweathermap.org/img/w/10d.png"));
         apiId.setText(config.getAppId());
+
+        tempGauge.setValue(60.0);
     }
 
     // Be aware: This is a Spring bean. So we can do the following:
@@ -174,6 +180,8 @@ public class WeatherController {
                 weatherImage.setImage(new Image("http://openweathermap.org/img/w/" + forecast.getWeather()[0].getIcon() + ".png"));
 
                 calendar.setTimeInMillis(forecast.getDateTime());
+
+                tempGauge.setValue(forecast.getMain().getTemperature());
 
                 logger.info("On Succeed callback - weather for " + forecast.getCityName() + "  " + calendar.getTime().toString());
             }
